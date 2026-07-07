@@ -1,0 +1,44 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: fisiohaven_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: bdfisiohaven
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build:
+      context: ./fisiohaven
+      dockerfile: Dockerfile
+    container_name: fisiohaven_backend
+    restart: on-failure
+    depends_on:
+      - db
+    environment:
+      # Sobreescribe la URL para apuntar al contenedor de base de datos ("db") en lugar de localhost
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/bdfisiohaven?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=admin
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./fisiohaven-frontend
+      dockerfile: Dockerfile
+    container_name: fisiohaven_frontend
+    restart: on-failure
+    depends_on:
+      - backend
+    ports:
+      # Mapea el puerto 4200 de tu máquina al puerto 80 del contenedor NGINX
+      - "4200:80"
+
+volumes:
+  mysql_data:
