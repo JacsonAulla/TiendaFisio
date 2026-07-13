@@ -1,0 +1,82 @@
+<aside class="w-64 border-r border-gray-200 bg-white overflow-y-auto flex-shrink-0">
+  <div class="p-6">
+    <div class="flex items-center gap-2 text-gray-400 text-sm font-bold tracking-wider mb-6">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+      FILTROS
+    </div>
+
+    <div class="mb-8">
+      <h3 class="text-sm font-bold text-gray-800 mb-4">CATEGORÍAS</h3>
+      <div class="space-y-3">
+        <label *ngFor="let cat of categorias" class="flex items-center gap-3 cursor-pointer group">
+          <input type="checkbox" 
+                 [checked]="selectedCategorias.has(cat.id)"
+                 (change)="toggleCategoria(cat.id)"
+                 class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+          <span class="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">{{ cat.nombre }}</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <h3 class="text-sm font-bold text-gray-800 mb-4">MARCAS</h3>
+      <div class="space-y-3">
+        <label *ngFor="let marca of marcas" class="flex items-center gap-3 cursor-pointer group">
+          <input type="checkbox" 
+                 [checked]="selectedMarcas.has(marca.id)"
+                 (change)="toggleMarca(marca.id)"
+                 class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+          <span class="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">{{ marca.nombre }}</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="flex-1 bg-slate-50 overflow-y-auto p-8">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-slate-900">Catálogo de Productos</h1>
+    <p class="text-gray-500 text-sm mt-1">Mostrando {{ productos.length }} productos</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    
+    <div *ngFor="let p of productos" class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group flex flex-col h-full">
+      <!-- Card Image/Color Area -->
+      <div class="h-40 rounded-xl relative flex items-center justify-center mb-4 overflow-hidden" [ngClass]="getBgColor(p)">
+        
+        <!-- Stock Badge -->
+        <span class="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded-md"
+              [ngClass]="{
+                'bg-emerald-200 text-emerald-800': p.stock > 10,
+                'bg-amber-200 text-amber-800': p.stock > 0 && p.stock <= 10,
+                'bg-red-200 text-red-800': p.stock === 0
+              }">
+          {{ p.stock > 10 ? 'In Stock' : (p.stock > 0 ? 'Low Stock' : 'Out of Stock') }}
+        </span>
+
+        <!-- Product Icon -->
+        <svg class="w-16 h-16" [ngClass]="getIconColor(p)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+        </svg>
+      </div>
+
+      <!-- Card Details -->
+      <div class="flex-1 flex flex-col">
+        <div class="text-xs text-gray-400 font-medium mb-1 truncate">{{ p.marca }} • {{ p.categoria }}</div>
+        <h3 class="text-sm font-bold text-gray-800 leading-snug mb-4 line-clamp-2">{{ p.nombre }}</h3>
+        
+        <div class="mt-auto flex items-center justify-between">
+          <div class="text-lg font-extrabold text-slate-900">${{ p.precio | number:'1.2-2' }}</div>
+          
+          <button (click)="addToCart(p)" 
+                  [disabled]="p.stock === 0"
+                  class="bg-blue-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-1">
+            <span>+</span> Añadir al Carrito
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

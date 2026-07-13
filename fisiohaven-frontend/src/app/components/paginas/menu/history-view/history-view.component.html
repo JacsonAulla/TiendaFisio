@@ -1,0 +1,84 @@
+<div class="flex-1 bg-slate-50 overflow-y-auto p-8 relative w-full">
+  
+  <!-- Header with Stats -->
+  <div class="flex items-start justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Historial de Ventas</h1>
+      <p class="text-gray-500 text-sm mt-1">Has realizado {{ ventas.length }} transacciones totales</p>
+    </div>
+
+    <div class="flex gap-4">
+      <div class="bg-white px-6 py-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <div class="bg-emerald-50 p-3 rounded-lg text-emerald-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-0.5">Ingresos Totales</div>
+          <div class="text-xl font-extrabold text-slate-900">${{ totalRevenue | number:'1.2-2' }}</div>
+        </div>
+      </div>
+      
+      <div class="bg-white px-6 py-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <div class="bg-blue-50 p-3 rounded-lg text-blue-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-0.5">Completadas</div>
+          <div class="text-xl font-extrabold text-slate-900">{{ completedSales }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center p-12">
+    <div class="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-500 font-bold uppercase tracking-wider text-xs">
+        <tr>
+          <th class="px-6 py-4">N° Factura</th>
+          <th class="px-6 py-4">Fecha</th>
+          <th class="px-6 py-4">Paciente</th>
+          <th class="px-6 py-4 text-right">Total</th>
+          <th class="px-6 py-4 text-center">Estado</th>
+          <th class="px-6 py-4 text-center">Acción</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 text-slate-700">
+        <tr *ngFor="let venta of filteredVentas" class="hover:bg-slate-50 transition-colors">
+          <td class="px-6 py-4 font-mono font-medium text-slate-900">{{ venta.numeroBoleta }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">{{ venta.fechaEmision | date:'dd MMM yyyy, HH:mm' }}</td>
+          <td class="px-6 py-4 font-medium">{{ venta.paciente || 'Paciente Anónimo' }}</td>
+          <td class="px-6 py-4 text-right font-bold text-slate-900">${{ venta.total | number:'1.2-2' }}</td>
+          <td class="px-6 py-4 text-center">
+            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                  [ngClass]="{
+                    'bg-emerald-100 text-emerald-800': venta.estado === 'COMPLETADA' || venta.estado === 'COMPLETADO',
+                    'bg-amber-100 text-amber-800': venta.estado === 'PENDIENTE',
+                    'bg-red-100 text-red-800': venta.estado === 'CANCELADA' || venta.estado === 'CANCELADO'
+                  }">
+              {{ venta.estado }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <button (click)="openInvoice(venta.id)" class="text-blue-600 hover:text-blue-900 hover:bg-blue-50 p-2 rounded-lg transition-colors" title="Ver Detalle">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            </button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="filteredVentas.length === 0">
+          <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+            No se encontraron ventas que coincidan con la búsqueda.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<app-invoice-modal *ngIf="selectedVentaId" [ventaId]="selectedVentaId" (close)="closeInvoice()"></app-invoice-modal>
