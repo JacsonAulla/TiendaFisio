@@ -1,129 +1,102 @@
-# TiendaFisio
+# 🛒 TiendaFisio
 
-1. Instalar Java 21
-Verificar instalación
+Guía paso a paso para levantar el entorno de desarrollo del proyecto (Backend en Spring Boot + Frontend en Angular).
 
-Abrir el Símbolo del sistema (CMD) y ejecutar:
+---
 
+## 🛠️ 1. Requisitos Previos
+
+### Java 21 (JDK)
+Verifica si ya lo tienes instalado abriendo tu terminal (CMD o Git Bash) y ejecutando:
+```bash
 java -version
-
-Luego:
-
 javac -version
+```
+*Si ambos comandos muestran la versión 21, puedes omitir este paso.*
+* **Instalación:** Descarga el **Java SE Development Kit 21 (LTS)** [desde la página de Oracle](https://www.oracle.com/java/technologies/downloads/#java21) (Windows x64 Installer `.exe`) e instálalo con la configuración predeterminada.
 
-Si ambos comandos muestran la versión 21, puedes continuar.
-
-Si no está instalado
-
-Buscar en Google:
-
-Oracle JDK 21
-
-o ingresar a:
-
-https://www.oracle.com/java/technologies/downloads/#java21
-
-Descargar:
-
-Windows
-x64 Installer (.exe)
-Java SE Development Kit 21 (LTS)
-
-Instalar con la configuración predeterminada.
-
-2. Instalar Node.js
-Verificar instalación
+### Node.js 22 (LTS)
+Verifica tu versión actual:
+```bash
 node -v
 npm -v
-Si no está instalado
+```
+* **Instalación:** Si no lo tienes, descarga la versión LTS para Windows desde [nodejs.org](https://nodejs.org/) e instálalo con la configuración por defecto.
 
-Buscar:
-
-Node.js 22 LTS
-
-o ingresar a:
-
-https://nodejs.org/
-
-Descargar la versión LTS para Windows e instalarla con la configuración predeterminada.
-
-3. Instalar Angular CLI
-Verificar instalación
+### Angular CLI 21
+Comprueba si Angular está instalado:
+```bash
 ng version
-Si no está instalado
-
-Ejecutar:
-
+```
+* **Instalación:** Si no está instalado, ejecuta el siguiente comando:
+```bash
 npm install -g @angular/cli@21
+```
 
-Luego verificar nuevamente:
+---
 
-ng version
+## 🗄️ 2. Configuración de la Base de Datos (MySQL)
 
-#MySQL
+> ⚠️ **Importante:** Durante la instalación de MySQL, recuerda bien el usuario y la contraseña de `root`, ya que el backend los necesitará para conectarse.
 
-Durante la instalación, recordar el usuario y la contraseña configurados para root, ya que serán utilizados por el proyecto.
+1. Abre **MySQL Workbench**.
+2. Crea la base de datos ejecutando este comando:
+   ```sql
+   CREATE DATABASE bdfisiohaven;
+   ```
+3. Abre el archivo `.sql` incluido en el proyecto (ej. `base.sql`).
+4. Ejecuta el script para importar las tablas y los datos iniciales de los artículos.
 
-Abrir MySQL Workbench.
-Crear una nueva base de datos ejecutando:
-CREATE DATABASE bdfisiohaven;
-Abrir el archivo SQL incluido junto al proyecto.
-Ejecutar el script para importar los datos iniciales de los artículos.
+---
 
+## ⚙️ 3. Configuración y Ejecución del Backend (Spring Boot)
 
-#Configuración del Backend
+1. Abre la carpeta del backend en **Visual Studio Code**.
+2. Espera unos segundos a que el editor descargue automáticamente todas las dependencias del proyecto.
+3. Configura tus credenciales de base de datos abriendo el archivo:
+   `src/main/resources/application-private.properties`
+4. Modifica las siguientes propiedades con tus datos locales:
+   ```properties
+   spring.datasource.username=root
+   spring.datasource.password=TU_CONTRASEÑA
+   ```
+   *No olvides guardar los cambios.*
+5. **Para ejecutar el servidor**, tienes dos opciones:
+   * **Opción A (Desde VS Code):** Abre el archivo `FisiohavenApplication.java` (ubicado junto a las carpetas `specs`, `services`, `security`, etc.) y ejecuta el método `main` (puedes usar el botón "Run" que aparece sobre la clase).
+   * **Opción B (Desde la terminal):** En la raíz del proyecto backend, ejecuta:
+     ```bash
+     .\mvnw.cmd spring-boot:run
+     ```
+     *(Nota: No es necesario instalar Maven manualmente, el proyecto utiliza Maven Wrapper).*
 
-Abrir el proyecto del backend con  visual.
+---
 
-Esperar a que visual descargue automáticamente todas las dependencias del proyecto.
+## 💻 4. Configuración y Ejecución del Frontend (Angular)
 
-Luego abrir el archivo:
+1. Abre una nueva terminal.
+2. Ingresa a la carpeta del frontend:
+   ```bash
+   cd fisiohaven-frontend
+   ```
+3. Instala las dependencias del proyecto:
+   ```bash
+   npm install
+   ```
+4. Inicia el servidor de desarrollo:
+   ```bash
+   ng serve -o
+   ```
+   *(El flag `-o` abrirá automáticamente la aplicación en tu navegador predeterminado).*
 
-src/main/resources/application-private.properties
+---
 
-y modificar los datos de conexión a MySQL según la configuración local:
+## 🚀 5. Accesos del Proyecto
 
-spring.datasource.username=root
-spring.datasource.password=TU_CONTRASEÑA
+Una vez que ambos servidores estén corriendo, puedes acceder a:
+* **Frontend (Interfaz):** [http://localhost:4200](http://localhost:4200)
+* **Backend (API):** [http://localhost:8080](http://localhost:8080)
 
-Guardar los cambios.
+---
 
-#Ejecutar el Backend
-
-Desde visual ejecutar la clase principal del proyecto (la clase que contiene el método main y la anotación @SpringBootApplication)(es el archivo FisiohavenApplication.java que esta junto a las carpetas specs, services, security, etc del back)
-
-Como alternativa, desde la carpeta raíz del proyecto ejecutar:
-
-mvnw.cmd spring-boot:run
-
-No es necesario instalar Maven, ya que el proyecto utiliza Maven Wrapper.
-
-#Ejecutar el Frontend
-
-Abrir una nueva terminal.
-
-Ingresar a la carpeta del frontend:( es con cd y nombre de la carpeta)
-
-cd fisiohaven-frontend
-
-Instalar las dependencias:
-
-npm install
-
-Iniciar el servidor de desarrollo:
-
-ng serve (o puedes usar "ng serve -o" para que te lleve directo a la pagina)
-
-#Acceso al Proyecto
-
-Frontend:
-
-http://localhost:4200
-
-Backend:
-
-http://localhost:8080
-
-#nota
-
-no hice documentacion de la api asi que confien nomas xd
+## 📝 Notas Finales
+*No hice documentación de la API así que confíen nomás xd.*
